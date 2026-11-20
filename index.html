@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17172a">
+<title>File Converter</title>
+<style>
+:root {
+  color-scheme: dark;
+  --hue-a: 252; --hue-b: 185; --hue-c: 325;
+  --text: #f5f4ff; --muted: #bbb9d1;
+  --line: hsla(var(--hue-a), 40%, 85%, .18);
+  --surface: hsla(var(--hue-a), 30%, 95%, .075);
+  --surface-strong: hsla(var(--hue-a), 36%, 13%, .52);
+  --accent: hsl(var(--hue-a), 95%, 85%);
+  --mint: hsl(var(--hue-b), 75%, 70%);
+  --glow-a: hsla(var(--hue-a), 95%, 70%, .30);
+  --glow-b: hsla(var(--hue-b), 78%, 55%, .18);
+  --glow-c: hsla(var(--hue-c), 75%, 65%, .13);
+  --shadow-accent: hsla(var(--hue-a), 90%, 75%, .28);
+  --green-bg: rgba(73,205,159,.15); --green-text: #c9fff0;
+  --disabled-text: #9290a4;
+  --page-a: hsl(var(--hue-a), 38%, 11%);
+  --page-b: hsl(var(--hue-a), 32%, 16%);
+  --page-c: hsl(var(--hue-b), 40%, 10%);
+  --shadow: rgba(0,0,0,.38);
+  --modal-bg: hsla(var(--hue-a), 34%, 15%, .42);
+  --modal-backdrop: rgba(8, 9, 20, .32);
+  --glass-edge-top: rgba(255, 255, 255, .42);
+  --glass-edge-side: rgba(255, 255, 255, .14);
+  --glass-sheen: linear-gradient(135deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,.04) 45%, rgba(255,255,255,.12) 100%);
+  --ios-glass: blur(7px) saturate(190%) brightness(1.06);
+  --ios-glass-modal: blur(7px) saturate(210%) brightness(1.08);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --text: #1c1b2e; --muted: #58556e;
+  --line: hsla(var(--hue-a), 35%, 25%, .14);
+  --surface: rgba(255,255,255,.42);
+  --surface-strong: rgba(255,255,255,.62);
+  --accent: hsl(var(--hue-a), 62%, 58%);
+  --mint: hsl(var(--hue-b), 55%, 42%);
+  --glow-a: hsla(var(--hue-a), 85%, 68%, .28);
+  --glow-b: hsla(var(--hue-b), 75%, 52%, .20);
+  --glow-c: hsla(var(--hue-c), 75%, 65%, .16);
+  --shadow-accent: hsla(var(--hue-a), 70%, 60%, .24);
+  --green-bg: rgba(27,150,112,.14); --green-text: #135c46;
+  --disabled-text: #8c899c;
+  --page-a: hsl(var(--hue-a), 42%, 93%);
+  --page-b: hsl(var(--hue-a), 48%, 96%);
+  --page-c: hsl(var(--hue-b), 42%, 90%);
+  --shadow: rgba(49,43,88,.14);
+  --modal-bg: rgba(255, 255, 255, .54);
+  --modal-backdrop: rgba(26, 24, 48, .18);
+  --glass-edge-top: rgba(255, 255, 255, .92);
+  --glass-edge-side: rgba(255, 255, 255, .55);
+  --glass-sheen: linear-gradient(135deg, rgba(255,255,255,.65) 0%, rgba(255,255,255,.15) 48%, rgba(255,255,255,.35) 100%);
+  --ios-glass: blur(7px) saturate(185%) brightness(1.02);
+  --ios-glass-modal: blur(7px) saturate(200%) brightness(1.04);
+}
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    color-scheme: light;
+    --text: #1c1b2e; --muted: #58556e;
+    --line: hsla(var(--hue-a), 35%, 25%, .14);
+    --surface: rgba(255,255,255,.42);
+    --surface-strong: rgba(255,255,255,.62);
+    --accent: hsl(var(--hue-a), 62%, 58%);
+    --mint: hsl(var(--hue-b), 55%, 42%);
+    --glow-a: hsla(var(--hue-a), 85%, 68%, .28);
+    --glow-b: hsla(var(--hue-b), 75%, 52%, .20);
+    --glow-c: hsla(var(--hue-c), 75%, 65%, .16);
+    --shadow-accent: hsla(var(--hue-a), 70%, 60%, .24);
+    --green-bg: rgba(27,150,112,.14); --green-text: #135c46;
+    --disabled-text: #8c899c;
+    --page-a: hsl(var(--hue-a), 42%, 93%);
+    --page-b: hsl(var(--hue-a), 48%, 96%);
+    --page-c: hsl(var(--hue-b), 42%, 90%);
+    --shadow: rgba(49,43,88,.14);
+    --modal-bg: rgba(255, 255, 255, .54);
+    --modal-backdrop: rgba(26, 24, 48, .18);
+    --glass-edge-top: rgba(255, 255, 255, .92);
+    --glass-edge-side: rgba(255, 255, 255, .55);
+    --glass-sheen: linear-gradient(135deg, rgba(255,255,255,.65) 0%, rgba(255,255,255,.15) 48%, rgba(255,255,255,.35) 100%);
+    --ios-glass: blur(7px) saturate(185%) brightness(1.03);
+    --ios-glass-modal: blur(7px) saturate(200%) brightness(1.05);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh; margin: 0; padding: 34px 16px; color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(ellipse at 12% 10%, var(--glow-a), transparent 36%),
+    radial-gradient(ellipse at 90% 24%, var(--glow-b), transparent 34%),
+    radial-gradient(ellipse at 50% 100%, var(--glow-c), transparent 40%),
+    linear-gradient(135deg, var(--page-a), var(--page-b) 55%, var(--page-c));
+}
+button { font: inherit; }
+.app { width: min(960px,100%); margin: 0 auto; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 4px 18px; color: var(--muted); font-size: 13px; }
+.brand { display: flex; align-items: center; gap: 9px; }
+.brand-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 11px; color: #19172f; font-weight: 900; background: linear-gradient(140deg, var(--accent), var(--mint)); box-shadow: 0 0 24px var(--shadow-accent), inset 0 1px 1px rgba(255,255,255,.65); }
+.mode-badge { padding: 4px 9px; border-radius: 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); background: var(--surface); backdrop-filter: var(--ios-glass); -webkit-backdrop-filter: var(--ios-glass); }
+.mode-badge.secure { color: var(--green-text); background: var(--green-bg); border-color: rgba(73,205,159,.35); }
+.header-right { display: flex; align-items: center; gap: 9px; }
+.custom-select-btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; min-height: 47px; padding: 0 14px; color: var(--text);
+  border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-left-color: var(--glass-edge-top);
+  border-radius: 13px; background: var(--surface-strong); backdrop-filter: var(--ios-glass); -webkit-backdrop-filter: var(--ios-glass);
+  box-shadow: 0 4px 14px rgba(0,0,0,.1), inset 0 1px 0 var(--glass-edge-top);
+  cursor: pointer; text-align: left; transition: transform .18s cubic-bezier(.22,1,.36,1), border-color .18s ease, box-shadow .18s ease;
+}
+.custom-select-btn.theme-btn { width: auto; min-width: 106px; min-height: 36px; padding: 0 11px; border-radius: 11px; }
+.custom-select-btn:hover:not(:disabled) { border-color: var(--accent); box-shadow: 0 6px 20px var(--shadow-accent), inset 0 1px 1px var(--glass-edge-top); }
+.custom-select-btn:active:not(:disabled) { transform: scale(.98); }
+.custom-select-btn:disabled { opacity: .56; cursor: not-allowed; }
+.select-arrow { font-size: 11px; opacity: .72; flex: 0 0 auto; }
+.card {
+  position: relative; overflow: hidden; padding: clamp(20px,5vw,42px);
+  border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-left-color: var(--glass-edge-top);
+  border-radius: 28px; background: var(--glass-sheen), var(--surface);
+  box-shadow: 0 28px 85px var(--shadow), inset 0 1.5px 1px var(--glass-edge-top), inset 1px 0 1px var(--glass-edge-side), inset 0 -1px 1px rgba(0,0,0,.12);
+  backdrop-filter: var(--ios-glass); -webkit-backdrop-filter: var(--ios-glass);
+}
+.card::before { content: ""; position: absolute; top: 0; left: 8%; right: 8%; height: 1px; background: linear-gradient(90deg, transparent, var(--glass-edge-top), transparent); pointer-events: none; }
+h1 { margin: 0; font-size: clamp(29px,5vw,42px); letter-spacing: -.04em; }
+.lead { margin: 9px 0 24px; color: var(--muted); line-height: 1.7; }
+.dropzone { display: grid; place-items: center; min-height: 160px; padding: 22px; text-align: center; border: 1.5px dashed var(--glass-edge-top); border-radius: 20px; background: rgba(255,255,255,.04); box-shadow: inset 0 1px 1px var(--glass-edge-side); cursor: pointer; transition: border-color .22s ease, background .22s ease, transform .22s cubic-bezier(.22,1,.36,1); }
+.dropzone:hover,.dropzone.dragover { border-color: var(--accent); background: var(--surface); transform: translateY(-1px); }
+.upload-icon { display: grid; place-items: center; width: 48px; height: 48px; margin: 0 auto 10px; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-radius: 15px; background: var(--surface-strong); box-shadow: 0 6px 16px rgba(0,0,0,.12), inset 0 1px 0 var(--glass-edge-top); font-size: 25px; }
+.drop-title { font-weight: 700; }
+.drop-hint { margin-top: 6px; color: var(--muted); font-size: 13px; }
+input[type="file"] { display: none; }
+.file-row { display: none; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding: 11px 13px; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-radius: 14px; background: var(--surface); backdrop-filter: var(--ios-glass); -webkit-backdrop-filter: var(--ios-glass); box-shadow: inset 0 1px 0 var(--glass-edge-top); }
+.file-name { min-width: 0; overflow-wrap: anywhere; font-size: 13px; }
+.small-button { flex: 0 0 auto; padding: 7px 11px; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-radius: 10px; color: var(--text); background: var(--surface-strong); box-shadow: inset 0 1px 0 var(--glass-edge-top); cursor: pointer; transition: transform .15s ease, border-color .15s ease; }
+.small-button:hover { border-color: var(--accent); }
+.small-button:active { transform: scale(.96); }
+.fields { display: grid; grid-template-columns: minmax(150px,.75fr) minmax(0,1.7fr); gap: 16px; margin-top: 21px; }
+.quality-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+.field { min-width: 0; }
+.field-label,.section-title { display: block; margin: 0 0 8px 2px; color: var(--muted); font-size: 13px; }
+.targets { display: grid; grid-template-columns: repeat(auto-fill,minmax(78px,1fr)); gap: 9px; }
+.target { min-width: 0; min-height: 48px; padding: 9px; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-radius: 13px; color: var(--text); background: var(--surface); backdrop-filter: var(--ios-glass); -webkit-backdrop-filter: var(--ios-glass); box-shadow: inset 0 1px 0 var(--glass-edge-top); cursor: pointer; transition: transform .16s cubic-bezier(.22,1,.36,1), border-color .16s ease, box-shadow .16s ease; }
+.target:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-1px); }
+.target:active:not(:disabled) { transform: scale(.96); }
+.target.selected { color: #17162c; border-color: rgba(255,255,255,.65); background: linear-gradient(125deg, var(--accent), var(--mint)); box-shadow: 0 6px 20px var(--shadow-accent), inset 0 1px 1px rgba(255,255,255,.85); font-weight: 800; }
+.target:disabled { color: var(--disabled-text); border-color: rgba(128,128,150,.13); background: rgba(128,128,150,.055); box-shadow: none; cursor: not-allowed; opacity: .72; }
+.convert { width: 100%; min-height: 50px; margin-top: 18px; border: 1px solid rgba(255,255,255,.55); border-radius: 15px; color: #17162c; background: linear-gradient(115deg, var(--accent), var(--mint)); font-weight: 800; cursor: pointer; box-shadow: 0 10px 28px var(--shadow-accent), inset 0 1.5px 1px rgba(255,255,255,.8); transition: transform .18s cubic-bezier(.22,1,.36,1), box-shadow .18s ease; }
+.convert:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 14px 34px var(--shadow-accent), inset 0 1.5px 1px rgba(255,255,255,.9); }
+.convert:active:not(:disabled) { transform: scale(.985); }
+.convert:disabled { opacity: .48; cursor: not-allowed; box-shadow: none; border-color: transparent; }
+.status { min-height: 24px; margin-top: 13px; color: var(--muted); font-size: 13px; text-align: center; overflow-wrap: anywhere; }
+.result { display: none; margin-top: 10px; text-align: center; }
+.download { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: 0 18px; border: 1px solid rgba(255,255,255,.65); border-radius: 13px; color: #17162c; background: linear-gradient(115deg, var(--accent), var(--mint)); box-shadow: 0 8px 24px var(--shadow-accent), inset 0 1px 1px rgba(255,255,255,.85); font-weight: 750; text-decoration: none; transition: transform .16s ease; }
+.download:hover { transform: translateY(-1px); }
+.matrix-wrap { margin-top: 26px; padding-top: 21px; border-top: 1px solid var(--line); }
+.matrix-intro { margin: -2px 0 13px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.matrix-group { margin-top: 16px; }
+.matrix-group h3 { margin: 0 0 8px; font-size: 14px; }
+.matrix { display: grid; grid-template-columns: repeat(auto-fill,minmax(190px,1fr)); gap: 8px; }
+.format-card { min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-radius: 13px; background: var(--surface); backdrop-filter: var(--ios-glass); -webkit-backdrop-filter: var(--ios-glass); box-shadow: inset 0 1px 0 var(--glass-edge-top); }
+.format-name { grid-column: 1/-1; font-size: 13px; font-weight: 750; }
+.cap { padding: 5px 6px; border-radius: 8px; text-align: center; font-size: 11px; line-height: 1.4; }
+.cap.yes { color: var(--green-text); background: var(--green-bg); }
+.cap.no { color: var(--disabled-text); background: rgba(128,128,150,.07); }
+.note { margin: 18px 2px 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.glass-modal-overlay {
+  position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: var(--modal-backdrop); backdrop-filter: blur(0px) saturate(100%); -webkit-backdrop-filter: blur(0px) saturate(100%);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .32s cubic-bezier(.22, 1, .36, 1), backdrop-filter .36s cubic-bezier(.22, 1, .36, 1), -webkit-backdrop-filter .36s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .36s;
+}
+.glass-modal-overlay.open {
+  opacity: 1; visibility: visible; pointer-events: auto; backdrop-filter: blur(6px) saturate(180%); -webkit-backdrop-filter: blur(6px) saturate(180%);
+  transition: opacity .32s cubic-bezier(.22, 1, .36, 1), backdrop-filter .36s cubic-bezier(.22, 1, .36, 1), -webkit-backdrop-filter .36s cubic-bezier(.22, 1, .36, 1), visibility 0s linear 0s;
+}
+.glass-modal {
+  position: relative; overflow: hidden; width: min(360px, 100%); padding: 18px;
+  border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-left-color: var(--glass-edge-top);
+  border-radius: 26px; background: var(--glass-sheen), var(--modal-bg);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .42), inset 0 1.5px 1px var(--glass-edge-top), inset 1px 0 1px var(--glass-edge-side), inset 0 -1px 1px rgba(0,0,0,.15);
+  backdrop-filter: var(--ios-glass-modal); -webkit-backdrop-filter: var(--ios-glass-modal);
+  opacity: 0; transform: translateY(16px) scale(.92);
+  transition: transform .38s cubic-bezier(.34, 1.36, .64, 1), opacity .26s cubic-bezier(.22, 1, .36, 1);
+}
+.glass-modal::before { content: ""; position: absolute; top: 0; left: 12%; right: 12%; height: 1.5px; background: linear-gradient(90deg, transparent, var(--glass-edge-top), transparent); pointer-events: none; }
+.glass-modal-overlay.open .glass-modal { opacity: 1; transform: translateY(0) scale(1); }
+.glass-modal-overlay.closing .glass-modal { opacity: 0; transform: translateY(10px) scale(.94); transition: transform .24s cubic-bezier(.4, 0, .2, 1), opacity .22s ease; }
+.glass-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px; }
+.glass-modal-title { font-size: 14px; font-weight: 700; color: var(--muted); }
+.glass-modal-close { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-radius: 9px; background: var(--surface); color: var(--text); box-shadow: inset 0 1px 0 var(--glass-edge-top); font-size: 14px; cursor: pointer; transition: transform .16s ease, background .16s ease; }
+.glass-modal-close:hover { background: var(--surface-strong); }
+.glass-modal-close:active { transform: scale(.9); }
+.glass-modal-list { display: flex; flex-direction: column; gap: 8px; }
+.glass-option { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid var(--glass-edge-side); border-top-color: var(--glass-edge-top); border-radius: 14px; background: var(--surface); color: var(--text); box-shadow: inset 0 1px 0 var(--glass-edge-top); font-size: 14px; text-align: left; cursor: pointer; transition: transform .16s cubic-bezier(.22,1,.36,1), border-color .16s ease, background .16s ease; }
+.glass-option:hover { border-color: var(--accent); background: var(--surface-strong); transform: translateX(2px); }
+.glass-option:active { transform: scale(.98); }
+.glass-option.active { color: #17162c; border-color: rgba(255,255,255,.7); background: linear-gradient(115deg, var(--accent), var(--mint)); box-shadow: 0 6px 18px var(--shadow-accent), inset 0 1px 1px rgba(255,255,255,.85); font-weight: 800; }
+@media (max-width:650px) {
+  body { padding: 18px 11px; }
+  .card { padding: 21px 15px; border-radius: 23px; }
+  .fields, .quality-fields { grid-template-columns: 1fr; }
+  .matrix { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .header { font-size: 11px; }
+}
+@media (max-width:370px) {
+  .matrix { grid-template-columns: 1fr; }
+  .header-right { gap: 5px; }
+  .header-right > span { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="header">
+    <div class="brand">
+      <span class="brand-mark">C</span>
+      <span>CONVERTER</span>
+      <span class="mode-badge" id="modeBadge">Local Mode</span>
+    </div>
+    <div class="header-right">
+      <span>Appearance</span>
+      <button type="button" class="custom-select-btn theme-btn" id="themeBtn" aria-label="Theme">
+        <span id="themeLabel">System</span>
+        <span class="select-arrow">▼</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    <h1>Convert your files</h1>
+    <p class="lead">Choose a file, resolution settings, and a supported output format. Files are processed locally by your browser.</p>
+
+    <label class="dropzone" id="dropzone" for="fileInput">
+      <span>
+        <span class="upload-icon">↥</span>
+        <span class="drop-title">Drop a file here or tap to browse</span>
+        <span class="drop-hint">Audio and image formats</span>
+      </span>
+    </label>
+    <input id="fileInput" type="file"
+      accept=".mp3,.ogg,.m4a,.wav,.aac,.wma,.png,.jpg,.jpeg,.webp,.svg,.gif,.bmp">
+
+    <div class="file-row" id="fileRow">
+      <span class="file-name" id="fileName"></span>
+      <button class="small-button" id="clearFile" type="button">Change</button>
+    </div>
+    <div class="fields">
+      <div class="field">
+        <span class="field-label">File type</span>
+        <button type="button" class="custom-select-btn" id="categoryBtn">
+          <span id="categoryLabel">Image</span>
+          <span class="select-arrow">▼</span>
+        </button>
+      </div>
+      <div class="field">
+        <span class="field-label">Convert to</span>
+        <div class="targets" id="targets"></div>
+      </div>
+    </div>
+
+    <div class="quality-fields" id="imageOptions">
+      <div class="field">
+        <span class="field-label">Image resolution scale</span>
+        <button type="button" class="custom-select-btn" id="imageScaleBtn">
+          <span id="imageScaleLabel">100% (Original)</span>
+          <span class="select-arrow">▼</span>
+        </button>
+      </div>
+      <div class="field" id="imageQualityField" style="display:none;">
+        <span class="field-label">Compression quality</span>
+        <button type="button" class="custom-select-btn" id="imageQualityBtn">
+          <span id="imageQualityLabel">92% (High)</span>
+          <span class="select-arrow">▼</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="quality-fields" id="audioOptions" style="display:none;">
+      <div class="field" id="audioBitrateField">
+        <span class="field-label">Audio bitrate</span>
+        <button type="button" class="custom-select-btn" id="audioBitrateBtn">
+          <span id="audioBitrateLabel">192 kbps (Standard)</span>
+          <span class="select-arrow">▼</span>
+        </button>
+      </div>
+      <div class="field" id="wavSampleRateField" style="display:none;">
+        <span class="field-label">Sample rate</span>
+        <button type="button" class="custom-select-btn" id="wavSampleRateBtn">
+          <span id="wavSampleRateLabel">Original</span>
+          <span class="select-arrow">▼</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="convert" id="convertButton" type="button" disabled>Select a file to start</button>
+    <div class="status" id="status" aria-live="polite"></div>
+    <div class="result" id="result">
+      <a class="download" id="download" download>Download converted file</a>
+    </div>
+
+    <section class="matrix-wrap">
+      <span class="section-title">Browser format support</span>
+      <p class="matrix-intro">All formats are always listed. Green means the browser reports support. Import and export are checked separately.</p>
+      <div id="matrix"></div>
+    </section>
+
+    <p class="note">
+      This single file makes no network requests and uses no external libraries.
+      Browser support checks are estimates; a particular file may still use an unsupported codec.
+      GIF import may use only the displayed frame. Audio recording happens in real time.
+    </p>
+  </section>
+</main>
+<div class="glass-modal-overlay" id="glassModalOverlay" role="dialog" aria-modal="true">
+  <div class="glass-modal">
+    <div class="glass-modal-header">
+      <span class="glass-modal-title" id="glassModalTitle">Select option</span>
+      <button type="button" class="glass-modal-close" id="glassModalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="glass-modal-list" id="glassModalList"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const rootEl = document.documentElement;
+const startHue = Math.random() * 360;
+const cycleDurationMs = 300000;
+let cycleStartTime = null;
+
+function setRainbowHues(baseHue) {
+  const h1 = baseHue % 360;
+  const h2 = (h1 + 293) % 360;
+  const h3 = (h1 + 73) % 360;
+  rootEl.style.setProperty("--hue-a", h1.toFixed(3));
+  rootEl.style.setProperty("--hue-b", h2.toFixed(3));
+  rootEl.style.setProperty("--hue-c", h3.toFixed(3));
+}
+
+setRainbowHues(startHue);
+
+function animateRainbow(timestamp) {
+  if (cycleStartTime === null) cycleStartTime = timestamp;
+  const elapsed = timestamp - cycleStartTime;
+  const currentHue = (startHue + (elapsed / cycleDurationMs) * 360) % 360;
+  setRainbowHues(currentHue);
+  requestAnimationFrame(animateRainbow);
+}
+
+requestAnimationFrame(animateRainbow);
+
+const isHttps = window.location.protocol === "https:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+const formats = {
+  image: [
+    { ext: "png", label: "PNG", mime: "image/png" },
+    { ext: "jpg", label: "JPG", mime: "image/jpeg" },
+    { ext: "jpeg", label: "JPEG", mime: "image/jpeg" },
+    { ext: "webp", label: "WebP", mime: "image/webp" },
+    { ext: "svg", label: "SVG", mime: "image/svg+xml" },
+    { ext: "gif", label: "GIF", mime: "image/gif" },
+    { ext: "bmp", label: "BMP", mime: "image/bmp" }
+  ],
+  audio: [
+    { ext: "mp3", label: "MP3", mime: "audio/mpeg", inputMimes: ["audio/mpeg", 'audio/mpeg; codecs="mp3"'], outputMimes: ["audio/mpeg", "audio/mp3"] },
+    { ext: "ogg", label: "OGG", mime: "audio/ogg", inputMimes: ["audio/ogg", 'audio/ogg; codecs="vorbis"'], outputMimes: ["audio/ogg;codecs=opus", "audio/ogg;codecs=vorbis", "audio/ogg"] },
+    { ext: "m4a", label: "M4A", mime: "audio/mp4", inputMimes: ["audio/mp4", 'audio/mp4; codecs="mp4a.40.2"'], outputMimes: ['audio/mp4;codecs="mp4a.40.2"', "audio/mp4"] },
+    { ext: "wav", label: "WAV", mime: "audio/wav", inputMimes: ["audio/wav", 'audio/wav; codecs="1"'], outputMimes: [] },
+    { ext: "aac", label: "AAC", mime: "audio/aac", inputMimes: ["audio/aac"], outputMimes: ["audio/aac"] },
+    { ext: "wma", label: "WMA", mime: "audio/x-ms-wma", inputMimes: ["audio/x-ms-wma"], outputMimes: ["audio/x-ms-wma"] }
+  ]
+};
+const selectConfigs = {
+  theme: {
+    title: "Appearance",
+    options: [
+      { value: "system", label: "System" },
+      { value: "dark", label: "Dark" },
+      { value: "light", label: "Light" }
+    ]
+  },
+  category: {
+    title: "File type",
+    options: [
+      { value: "image", label: "Image" },
+      { value: "audio", label: "Audio" }
+    ]
+  },
+  imageScale: {
+    title: "Image resolution scale",
+    options: [
+      { value: "1", label: "100% (Original)" },
+      { value: "0.75", label: "75%" },
+      { value: "0.5", label: "50%" },
+      { value: "0.25", label: "25%" }
+    ]
+  },
+  imageQuality: {
+    title: "Compression quality",
+    options: [
+      { value: "1", label: "100% (Maximum)" },
+      { value: "0.92", label: "92% (High)" },
+      { value: "0.75", label: "75% (Medium)" },
+      { value: "0.5", label: "50% (Low)" }
+    ]
+  },
+  audioBitrate: {
+    title: "Audio bitrate",
+    options: [
+      { value: "320000", label: "320 kbps (High)" },
+      { value: "192000", label: "192 kbps (Standard)" },
+      { value: "128000", label: "128 kbps (Medium)" },
+      { value: "64000", label: "64 kbps (Low)" }
+    ]
+  },
+  wavSampleRate: {
+    title: "Sample rate",
+    options: [
+      { value: "0", label: "Original" },
+      { value: "48000", label: "48000 Hz (Studio)" },
+      { value: "44100", label: "44100 Hz (CD Quality)" },
+      { value: "22050", label: "22050 Hz (Compact)" }
+    ]
+  }
+};
+
+const state = {
+  theme: "dark",
+  category: "image",
+  imageScale: "1",
+  imageQuality: "0.92",
+  audioBitrate: "192000",
+  wavSampleRate: "0"
+};
+
+const capability = {};
+const outputMime = {};
+
+for (const group of Object.keys(formats)) {
+  for (const item of formats[group]) {
+    capability[item.ext] = { input: false, output: false };
+  }
+}
+const modeBadge = document.getElementById("modeBadge");
+const fileInput = document.getElementById("fileInput");
+const dropzone = document.getElementById("dropzone");
+const targets = document.getElementById("targets");
+const imageOptions = document.getElementById("imageOptions");
+const imageQualityField = document.getElementById("imageQualityField");
+const audioOptions = document.getElementById("audioOptions");
+const audioBitrateField = document.getElementById("audioBitrateField");
+const wavSampleRateField = document.getElementById("wavSampleRateField");
+const matrix = document.getElementById("matrix");
+const fileRow = document.getElementById("fileRow");
+const fileName = document.getElementById("fileName");
+const clearFile = document.getElementById("clearFile");
+const convertButton = document.getElementById("convertButton");
+const statusBox = document.getElementById("status");
+const resultBox = document.getElementById("result");
+const downloadLink = document.getElementById("download");
+
+const themeBtn = document.getElementById("themeBtn");
+const themeLabel = document.getElementById("themeLabel");
+const categoryBtn = document.getElementById("categoryBtn");
+const categoryLabel = document.getElementById("categoryLabel");
+const imageScaleBtn = document.getElementById("imageScaleBtn");
+const imageScaleLabel = document.getElementById("imageScaleLabel");
+const imageQualityBtn = document.getElementById("imageQualityBtn");
+const imageQualityLabel = document.getElementById("imageQualityLabel");
+const audioBitrateBtn = document.getElementById("audioBitrateBtn");
+const audioBitrateLabel = document.getElementById("audioBitrateLabel");
+const wavSampleRateBtn = document.getElementById("wavSampleRateBtn");
+const wavSampleRateLabel = document.getElementById("wavSampleRateLabel");
+
+const glassModalOverlay = document.getElementById("glassModalOverlay");
+const glassModalTitle = document.getElementById("glassModalTitle");
+const glassModalClose = document.getElementById("glassModalClose");
+const glassModalList = document.getElementById("glassModalList");
+
+let selectedFile = null;
+let selectedTarget = "";
+let currentDownloadUrl = "";
+let modalCloseTimer = null;
+
+if (isHttps) {
+  modeBadge.textContent = "HTTPS Enhanced";
+  modeBadge.classList.add("secure");
+} else {
+  modeBadge.textContent = "Offline File Mode";
+}
+
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()[\]\\/+^])/g, "\\$1") + "=([^;]*)"));
+  return match ? decodeURIComponent(match) : "";
+}
+
+function setCookie(name, value, days) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
+function getOptionLabel(key, val) {
+  const found = selectConfigs[key].options.find(opt => opt.value === val);
+  return found ? found.label : val;
+}
+function setSelectState(key, val) {
+  state[key] = val;
+  if (key === "theme") {
+    themeLabel.textContent = getOptionLabel("theme", val);
+    applyTheme(val);
+  } else if (key === "category") {
+    categoryLabel.textContent = getOptionLabel("category", val);
+    selectedTarget = "";
+    updateOptionPanels();
+    renderTargets();
+    updateButton();
+  } else if (key === "imageScale") {
+    imageScaleLabel.textContent = getOptionLabel("imageScale", val);
+  } else if (key === "imageQuality") {
+    imageQualityLabel.textContent = getOptionLabel("imageQuality", val);
+  } else if (key === "audioBitrate") {
+    audioBitrateLabel.textContent = getOptionLabel("audioBitrate", val);
+  } else if (key === "wavSampleRate") {
+    wavSampleRateLabel.textContent = getOptionLabel("wavSampleRate", val);
+  }
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  setCookie("converter_theme", theme, 365);
+  try {
+    localStorage.setItem("converter_theme", theme);
+  } catch {}
+}
+
+let savedTheme = getCookie("converter_theme");
+if (!savedTheme) {
+  try {
+    savedTheme = localStorage.getItem("converter_theme") || "";
+  } catch {}
+}
+if (["system", "dark", "light"].includes(savedTheme)) {
+  setSelectState("theme", savedTheme);
+} else {
+  setSelectState("theme", "dark");
+}
+
+function openGlassModal(key) {
+  const config = selectConfigs[key];
+  if (!config) return;
+
+  if (modalCloseTimer) {
+    clearTimeout(modalCloseTimer);
+    modalCloseTimer = null;
+  }
+  glassModalOverlay.classList.remove("closing");
+
+  glassModalTitle.textContent = config.title;
+  glassModalList.innerHTML = "";
+
+  for (const opt of config.options) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "glass-option" + (state[key] === opt.value ? " active" : "");
+    btn.textContent = opt.label;
+    btn.addEventListener("click", () => {
+      setSelectState(key, opt.value);
+      closeGlassModal();
+    });
+    glassModalList.appendChild(btn);
+  }
+
+  requestAnimationFrame(() => {
+    glassModalOverlay.classList.add("open");
+  });
+}
+
+function closeGlassModal() {
+  if (!glassModalOverlay.classList.contains("open")) return;
+  glassModalOverlay.classList.add("closing");
+  glassModalOverlay.classList.remove("open");
+  modalCloseTimer = setTimeout(() => {
+    glassModalOverlay.classList.remove("closing");
+    modalCloseTimer = null;
+  }, 360);
+}
+glassModalClose.addEventListener("click", closeGlassModal);
+glassModalOverlay.addEventListener("click", event => {
+  if (event.target === glassModalOverlay) closeGlassModal();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && glassModalOverlay.classList.contains("open")) {
+    closeGlassModal();
+  }
+});
+
+themeBtn.addEventListener("click", () => openGlassModal("theme"));
+categoryBtn.addEventListener("click", () => {
+  if (!categoryBtn.disabled) openGlassModal("category");
+});
+imageScaleBtn.addEventListener("click", () => openGlassModal("imageScale"));
+imageQualityBtn.addEventListener("click", () => openGlassModal("imageQuality"));
+audioBitrateBtn.addEventListener("click", () => openGlassModal("audioBitrate"));
+wavSampleRateBtn.addEventListener("click", () => openGlassModal("wavSampleRate"));
+
+function updateOptionPanels() {
+  if (state.category === "image") {
+    imageOptions.style.display = "grid";
+    audioOptions.style.display = "none";
+    const showLossyQuality = ["jpg", "jpeg", "webp"].includes(selectedTarget);
+    imageQualityField.style.display = showLossyQuality ? "block" : "none";
+  } else {
+    imageOptions.style.display = "none";
+    audioOptions.style.display = "grid";
+    const isWav = selectedTarget === "wav";
+    wavSampleRateField.style.display = isWav ? "block" : "none";
+    audioBitrateField.style.display = isWav ? "none" : "block";
+  }
+}
+
+function extOf(name) {
+  const parts = name.toLowerCase().split(".");
+  return parts.length > 1 ? parts.pop() : "";
+}
+
+function kindOf(ext) {
+  for (const kind of Object.keys(formats)) {
+    if (formats[kind].some(item => item.ext === ext)) return kind;
+  }
+  return "";
+}
+
+function canRecordAny(mimes) {
+  if (!window.MediaRecorder || typeof MediaRecorder.isTypeSupported !== "function") return "";
+  for (const mime of mimes) {
+    try {
+      if (MediaRecorder.isTypeSupported(mime)) return mime;
+    } catch {}
+  }
+  return "";
+}
+
+function canPlayAny(element, mimes) {
+  for (const mime of mimes) {
+    try {
+      const answer = element.canPlayType(mime);
+      if (answer === "maybe" || answer === "probably") return true;
+    } catch {}
+  }
+  return false;
+}
+
+function bytesToDataUrl(bytes, mime) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return `data:${mime};base64,${btoa(binary)}`;
+}
+function makeBmpSample() {
+  const bytes = new Uint8Array(58);
+  const view = new DataView(bytes.buffer);
+  bytes[0] = 66;
+  bytes[1] = 77;
+  view.setUint32(2, 58, true);
+  view.setUint32(10, 54, true);
+  view.setUint32(14, 40, true);
+  view.setInt32(18, 1, true);
+  view.setInt32(22, 1, true);
+  view.setUint16(26, 1, true);
+  view.setUint16(28, 24, true);
+  view.setUint32(34, 4, true);
+  bytes[54] = 60;
+  bytes[55] = 110;
+  bytes[56] = 200;
+  return bytesToDataUrl(bytes, "image/bmp");
+}
+
+function imageLoads(dataUrl) {
+  return new Promise(resolve => {
+    const image = new Image();
+    const timer = setTimeout(() => resolve(false), 2500);
+    image.onload = () => {
+      clearTimeout(timer);
+      resolve(true);
+    };
+    image.onerror = () => {
+      clearTimeout(timer);
+      resolve(false);
+    };
+    image.src = dataUrl;
+  });
+}
+
+async function probeImageInput() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1;
+  canvas.height = 1;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#d73980";
+  context.fillRect(0, 0, 1, 1);
+
+  const png = canvas.toDataURL("image/png");
+  const jpeg = canvas.toDataURL("image/jpeg");
+  let webp = canvas.toDataURL("image/webp");
+
+  if (!webp.startsWith("data:image/webp")) {
+    webp = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEAAUAmJaQAA3AA/v89WAAAAA==";
+  }
+
+  const samples = {
+    png,
+    jpg: jpeg,
+    jpeg,
+    webp,
+    svg: "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+      '<svg xmlns="http://w3.org" width="1" height="1"><rect width="1" height="1" fill="red"/></svg>'
+    ),
+    gif: "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=",
+    bmp: makeBmpSample()
+  };
+
+  for (const ext of Object.keys(samples)) {
+    capability[ext].input = await imageLoads(samples[ext]);
+  }
+}
+
+function canvasSupports(mime) {
+  return new Promise(resolve => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    canvas.toBlob(blob => resolve(!!blob && blob.type === mime), mime);
+  });
+}
+
+async function detectCapabilities() {
+  await probeImageInput();
+
+  capability.png.output = await canvasSupports("image/png");
+  capability.jpg.output = await canvasSupports("image/jpeg");
+  capability.jpeg.output = capability.jpg.output;
+  capability.webp.output = await canvasSupports("image/webp");
+  capability.bmp.output = !!document.createElement("canvas").getContext("2d");
+  capability.svg.output = !!document.createElement("canvas").getContext("2d");
+  capability.gif.output = false;
+
+  const audio = document.createElement("audio");
+
+  for (const item of formats.audio) {
+    capability[item.ext].input = canPlayAny(audio, item.inputMimes);
+
+    if (item.ext === "wav") {
+      capability[item.ext].output = !!(window.AudioContext || window.webkitAudioContext);
+    } else {
+      const mime = canRecordAny(item.outputMimes);
+      capability[item.ext].output = !!mime;
+      if (mime) outputMime[item.ext] = mime;
+    }
+  }
+
+  renderMatrix();
+  renderTargets();
+  updateButton();
+}
+function renderMatrix() {
+  matrix.innerHTML = "";
+
+  for (const kind of Object.keys(formats)) {
+    const group = document.createElement("section");
+    group.className = "matrix-group";
+
+    const heading = document.createElement("h3");
+    heading.textContent = kind === "image" ? "Images" : "Audio";
+    group.appendChild(heading);
+
+    const grid = document.createElement("div");
+    grid.className = "matrix";
+
+    for (const item of formats[kind]) {
+      const card = document.createElement("div");
+      card.className = "format-card";
+
+      const name = document.createElement("div");
+      name.className = "format-name";
+      name.textContent = item.label || item.ext.toUpperCase();
+      card.appendChild(name);
+
+      const inputStatus = document.createElement("div");
+      inputStatus.className = `cap ${capability[item.ext].input ? "yes" : "no"}`;
+      inputStatus.textContent = capability[item.ext].input ? "Import · Supported" : "Import · Unavailable";
+      card.appendChild(inputStatus);
+
+      const outputStatus = document.createElement("div");
+      outputStatus.className = `cap ${capability[item.ext].output ? "yes" : "no"}`;
+      outputStatus.textContent = capability[item.ext].output ? "Export · Supported" : "Export · Unavailable";
+      card.appendChild(outputStatus);
+
+      grid.appendChild(card);
+    }
+
+    group.appendChild(grid);
+    matrix.appendChild(group);
+  }
+}
+
+function renderTargets() {
+  const kind = state.category;
+  targets.innerHTML = "";
+
+  for (const item of formats[kind]) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "target";
+    button.textContent = item.label || item.ext.toUpperCase();
+    button.disabled = !capability[item.ext].output;
+    button.setAttribute("aria-pressed", String(selectedTarget === item.ext));
+
+    if (selectedTarget === item.ext) button.classList.add("selected");
+
+    button.addEventListener("click", () => {
+      if (!capability[item.ext].output) return;
+      selectedTarget = item.ext;
+      updateOptionPanels();
+      renderTargets();
+      updateButton();
+    });
+
+    targets.appendChild(button);
+  }
+}
+
+function updateButton() {
+  const inputExt = selectedFile ? extOf(selectedFile.name) : "";
+  const inputSupported = !!(inputExt && capability[inputExt] && capability[inputExt].input);
+  const outputSupported = !!(selectedTarget && capability[selectedTarget] && capability[selectedTarget].output);
+  const validGroup = !!(selectedFile && kindOf(inputExt) === state.category);
+
+  convertButton.disabled = !(selectedFile && inputSupported && outputSupported && validGroup);
+
+  if (!selectedFile) {
+    convertButton.textContent = "Select a file to start";
+  } else if (!kindOf(inputExt)) {
+    convertButton.textContent = "Unsupported file extension";
+  } else if (!inputSupported) {
+    convertButton.textContent = "This browser cannot import this format";
+  } else if (!validGroup) {
+    convertButton.textContent = "File type does not match";
+  } else if (!outputSupported) {
+    convertButton.textContent = "Choose an available output format";
+  } else {
+    convertButton.textContent = "Convert file";
+  }
+}
+function setFile(file) {
+  if (!file) return;
+
+  selectedFile = file;
+  const ext = extOf(file.name);
+  const kind = kindOf(ext);
+
+  fileRow.style.display = "flex";
+  fileName.textContent = `${file.name} · ${formatBytes(file.size)}`;
+  resultBox.style.display = "none";
+  statusBox.textContent = "";
+
+  if (kind) {
+    setSelectState("category", kind);
+    categoryBtn.disabled = true;
+  }
+
+  updateButton();
+
+  if (!kind) {
+    statusBox.textContent = "This file extension is not in the supported list.";
+  } else if (!capability[ext].input) {
+    statusBox.textContent = `The browser reports that it cannot import .${ext}.`;
+  } else {
+    statusBox.textContent = `.${ext} can be imported. Choose resolution and output format.`;
+  }
+}
+
+function clearSelectedFile() {
+  selectedFile = null;
+  fileInput.value = "";
+  fileRow.style.display = "none";
+  categoryBtn.disabled = false;
+  selectedTarget = "";
+  resultBox.style.display = "none";
+  statusBox.textContent = "";
+
+  if (currentDownloadUrl) {
+    URL.revokeObjectURL(currentDownloadUrl);
+    currentDownloadUrl = "";
+  }
+
+  updateOptionPanels();
+  renderTargets();
+  updateButton();
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function loadImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("The browser could not decode this image."));
+    };
+    image.src = url;
+  });
+}
+
+function canvasToBlob(canvas, mime, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (!blob || blob.type !== mime) {
+        reject(new Error(`The browser could not create ${mime}.`));
+      } else {
+        resolve(blob);
+      }
+    }, mime, quality);
+  });
+}
+function canvasToBmp(canvas) {
+  const width = canvas.width;
+  const height = canvas.height;
+  const pixels = canvas.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, width, height).data;
+  const rowSize = Math.floor((24 * width + 31) / 32) * 4;
+  const pixelBytes = rowSize * height;
+  const buffer = new ArrayBuffer(54 + pixelBytes);
+  const view = new DataView(buffer);
+
+  view.setUint8(0, 66);
+  view.setUint8(1, 77);
+  view.setUint32(2, 54 + pixelBytes, true);
+  view.setUint32(10, 54, true);
+  view.setUint32(14, 40, true);
+  view.setInt32(18, width, true);
+  view.setInt32(22, height, true);
+  view.setUint16(26, 1, true);
+  view.setUint16(28, 24, true);
+  view.setUint32(34, pixelBytes, true);
+
+  for (let y = 0; y < height; y++) {
+    const rowStart = 54 + (height - 1 - y) * rowSize;
+    for (let x = 0; x < width; x++) {
+      const source = (y * width + x) * 4;
+      const dest = rowStart + x * 3;
+      view.setUint8(dest, pixels.at(source + 2));
+      view.setUint8(dest + 1, pixels.at(source + 1));
+      view.setUint8(dest + 2, pixels.at(source));
+    }
+  }
+
+  return new Blob(Array.of(buffer), { type: "image/bmp" });
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Could not read the image data."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function convertImage(file, targetExt, scale, quality) {
+  const image = await loadImageFile(file);
+  const origWidth = image.naturalWidth || image.width;
+  const origHeight = image.naturalHeight || image.height;
+  const width = Math.max(1, Math.round(origWidth * scale));
+  const height = Math.max(1, Math.round(origHeight * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const context = canvas.getContext("2d", {
+    willReadFrequently: targetExt === "bmp"
+  });
+
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+
+  if (targetExt === "jpg" || targetExt === "jpeg") {
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, width, height);
+  }
+
+  context.drawImage(image, 0, 0, width, height);
+
+  if (targetExt === "png") return canvasToBlob(canvas, "image/png", 1);
+  if (targetExt === "jpg" || targetExt === "jpeg") return canvasToBlob(canvas, "image/jpeg", quality);
+  if (targetExt === "webp") return canvasToBlob(canvas, "image/webp", quality);
+  if (targetExt === "bmp") return canvasToBmp(canvas);
+
+  if (targetExt === "svg") {
+    const pngBlob = await canvasToBlob(canvas, "image/png", 1);
+    const dataUrl = await blobToDataUrl(pngBlob);
+    const svg = `<svg xmlns="http://w3.org" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" href="${dataUrl}"/></svg>`;
+    return new Blob(Array.of(svg), { type: "image/svg+xml" });
+  }
+
+  throw new Error(`Export to .${targetExt} is not available.`);
+}
+function writeAscii(view, offset, text) {
+  for (let i = 0; i < text.length; i++) {
+    view.setUint8(offset + i, text.charCodeAt(i));
+  }
+}
+
+async function convertAudioToWav(file, targetSampleRate) {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) throw new Error("Web Audio is unavailable in this browser.");
+
+  const context = new AudioContextClass();
+
+  try {
+    let audioBuffer = await context.decodeAudioData(await file.arrayBuffer());
+
+    if (targetSampleRate > 0 && targetSampleRate !== audioBuffer.sampleRate && window.OfflineAudioContext) {
+      const newLength = Math.ceil(audioBuffer.duration * targetSampleRate);
+      const offlineCtx = new OfflineAudioContext(audioBuffer.numberOfChannels, newLength, targetSampleRate);
+      const source = offlineCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(offlineCtx.destination);
+      source.start(0);
+      audioBuffer = await offlineCtx.startRendering();
+    }
+
+    const channels = Math.min(2, audioBuffer.numberOfChannels);
+    const sampleRate = audioBuffer.sampleRate;
+    const frameCount = audioBuffer.length;
+    const bytesPerSample = 2;
+    const dataSize = frameCount * channels * bytesPerSample;
+    const buffer = new ArrayBuffer(44 + dataSize);
+    const view = new DataView(buffer);
+
+    writeAscii(view, 0, "RIFF");
+    view.setUint32(4, 36 + dataSize, true);
+    writeAscii(view, 8, "WAVE");
+    writeAscii(view, 12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, channels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * channels * bytesPerSample, true);
+    view.setUint16(32, channels * bytesPerSample, true);
+    view.setUint16(34, 16, true);
+    writeAscii(view, 36, "data");
+    view.setUint32(40, dataSize, true);
+
+    const channelData = new Array();
+    for (let channel = 0; channel < channels; channel++) {
+      channelData.push(audioBuffer.getChannelData(channel));
+    }
+
+    let offset = 44;
+    for (let frame = 0; frame < frameCount; frame++) {
+      for (let channel = 0; channel < channels; channel++) {
+        const sample = Math.max(-1, Math.min(1, channelData.at(channel).at(frame)));
+        view.setInt16(offset, sample < 0 ? sample * 32768 : sample * 32767, true);
+        offset += 2;
+      }
+    }
+
+    return new Blob(Array.of(buffer), { type: "audio/wav" });
+  } finally {
+    await context.close();
+  }
+}
+
+async function convertAudioWithRecorder(file, mime, bitrate) {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) throw new Error("Web Audio is unavailable in this browser.");
+
+  const context = new AudioContextClass();
+  let stream;
+  let recorder;
+
+  try {
+    const audioBuffer = await context.decodeAudioData(await file.arrayBuffer());
+    const source = context.createBufferSource();
+    const destination = context.createMediaStreamDestination();
+    const chunks = new Array();
+
+    source.buffer = audioBuffer;
+    source.connect(destination);
+    stream = destination.stream;
+
+    if (context.state === "suspended") await context.resume();
+
+    try {
+      recorder = new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: bitrate });
+    } catch {
+      recorder = new MediaRecorder(stream, { mimeType: mime });
+    }
+
+    const done = new Promise((resolve, reject) => {
+      recorder.ondataavailable = event => {
+        if (event.data && event.data.size) chunks.push(event.data);
+      };
+      recorder.onerror = event => {
+        reject(event.error || new Error("Audio recording failed."));
+      };
+      recorder.onstop = () => {
+        resolve(new Blob(chunks, { type: "application/octet-stream" }));
+      };
+    });
+
+    recorder.start(250);
+    source.onended = () => {
+      if (recorder.state !== "inactive") recorder.stop();
+    };
+    source.start();
+
+    return await done;
+  } finally {
+    if (recorder && recorder.state !== "inactive") recorder.stop();
+    if (stream) stream.getTracks().forEach(track => track.stop());
+    await context.close();
+  }
+}
+
+async function convertSelectedFile() {
+  if (!selectedFile || !selectedTarget) return;
+
+  convertButton.disabled = true;
+  resultBox.style.display = "none";
+
+  try {
+    const kind = state.category;
+    let blob;
+
+    if (kind === "image") {
+      const scale = parseFloat(state.imageScale) || 1;
+      const quality = parseFloat(state.imageQuality) || 0.92;
+      statusBox.textContent = "Converting image…";
+      blob = await convertImage(selectedFile, selectedTarget, scale, quality);
+    } else {
+      if (selectedTarget === "wav") {
+        const targetRate = parseInt(state.wavSampleRate, 10) || 0;
+        statusBox.textContent = "Decoding audio and creating WAV…";
+        blob = await convertAudioToWav(selectedFile, targetRate);
+      } else {
+        const mime = outputMime.at ? outputMime.at(selectedTarget) : outputMime[selectedTarget];
+        const bitrate = parseInt(state.audioBitrate, 10) || 192000;
+        if (!mime) throw new Error("This audio output format is unavailable.");
+        statusBox.textContent = "Converting audio in real time. Keep this tab open…";
+        blob = await convertAudioWithRecorder(selectedFile, mime, bitrate);
+      }
+    }
+
+    if (!blob || !blob.size) throw new Error("The converted file is empty.");
+
+    if (currentDownloadUrl) URL.revokeObjectURL(currentDownloadUrl);
+    currentDownloadUrl = URL.createObjectURL(blob);
+
+    const baseName = selectedFile.name.replace(/\.[^.]+$/, "");
+    downloadLink.href = currentDownloadUrl;
+    downloadLink.download = `${baseName}.${selectedTarget}`;
+    resultBox.style.display = "block";
+    statusBox.textContent = `Conversion complete · ${formatBytes(blob.size)}`;
+  } catch (error) {
+    statusBox.textContent = error && error.message
+      ? error.message
+      : "Conversion failed. The file may use an unsupported codec.";
+  } finally {
+    updateButton();
+  }
+}
+
+fileInput.addEventListener("change", () => setFile(fileInput.files.item(0)));
+clearFile.addEventListener("click", () => clearSelectedFile());
+convertButton.addEventListener("click", convertSelectedFile);
+
+for (const eventName of Array.of("dragenter", "dragover")) {
+  dropzone.addEventListener(eventName, event => {
+    event.preventDefault();
+    dropzone.classList.add("dragover");
+  });
+}
+
+for (const eventName of Array.of("dragleave", "drop")) {
+  dropzone.addEventListener(eventName, event => {
+    event.preventDefault();
+    dropzone.classList.remove("dragover");
+  });
+}
+
+dropzone.addEventListener("drop", event => {
+  const file = event.dataTransfer.files.item(0);
+  if (file) setFile(file);
+});
+
+updateOptionPanels();
+renderTargets();
+detectCapabilities();
+</script>
+</body>
+</html>
